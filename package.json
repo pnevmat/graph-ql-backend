@@ -19,8 +19,10 @@
   "homepage": "https://github.com/pnevmat/graph-ql-backend#readme",
   "dependencies": {
     "babel-cli": "^6.26.0",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.7.0",
     "graphql-yoga": "^2.13.11",
-    "nodemon": "^2.0.19"
+    "nodemon": "^2.0.19",
+    "uuid": "^8.3.2"
   }
 }

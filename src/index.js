@@ -1,7 +1,8 @@
 import { createServer } from 'graphql-yoga';
+import { v4 as uuId } from 'uuid';
 
 // Demo user data
-const users = [
+let users = [
   {
     id: '123098',
     name: 'Vadim',
@@ -22,7 +23,7 @@ const users = [
 ];
 
 // Demo posts data
-const posts = [
+let posts = [
   {
     id: '455753',
     title: 'Post title',
@@ -47,7 +48,7 @@ const posts = [
 ];
 
 // Demo comments data
-const comments = [
+let comments = [
   {
     id: 'flgk03',
     text: 'Comment text1',
@@ -82,6 +83,34 @@ type Query {
 	comments: [Comment!]!
 	me: User!
 	post: Post
+}
+
+type Mutation {
+	createUser(data: CreateUserInput!): User!
+	deleteUser(id: ID!): User!
+	createPost(data: CreatePostInput!): Post!
+	deletePost(id: ID!): Post!
+	createComment(data: CreateCommentInput!): Comment!
+	deleteComment(id: ID!): Comment!
+}
+
+input CreateUserInput {
+	name: String!,
+	email: String!, 
+	age: Int
+}
+
+input CreatePostInput {
+	title: String!
+	body: String!
+	published: Boolean!
+	author: ID!
+}
+
+input CreateCommentInput {
+	text: String!
+	author: ID!
+	post: ID!
 }
 
 type User {
@@ -155,6 +184,107 @@ const resolvers = {
         body: 'Some post text',
         published: false,
       };
+    },
+  },
+  Mutation: {
+    createUser(parent, args, ctx, info) {
+      const emailTaken = users.some(user => user.email === args.data.email);
+
+      if (emailTaken) {
+        throw new Error('Email is already exist.');
+      }
+
+      const user = {
+        id: uuId(),
+        ...args.data,
+      };
+
+      users.push(user);
+
+      return user;
+    },
+    deleteUser(parent, args, ctx, info) {
+      const userIndex = users.findIndex(user => user.id === args.id);
+
+      if (userIndex === -1) {
+        throw new Error('User doas not exist.');
+      }
+
+      const deletedUser = users.splice(userIndex, 1);
+
+      posts = posts.filter(post => {
+        if (post.author === args.id) {
+          comments = comments.filter(comment => comment.post !== post.id);
+        }
+        return post.author !== args.id;
+      });
+
+      comments = comments.filter(comment => comment.author !== args.id);
+
+      return deletedUser[0];
+    },
+    createPost(parent, args, ctx, info) {
+      const userIdExist = users.some(user => user.id === args.data.author);
+
+      if (!userIdExist) {
+        throw new Error('Author does not exist.');
+      }
+
+      const post = {
+        id: uuId(),
+        ...args.data,
+      };
+
+      posts.push(post);
+
+      return post;
+    },
+    deletePost(parent, args, ctx, info) {
+      const postIndex = posts.findIndex(post => post.id === args.id);
+
+      if (postIndex === -1) {
+        throw new Error('The post does not exist.');
+      }
+
+      const deletedPost = posts.splice(postIndex, 1);
+
+      comments = comments.filter(comment => comment.post !== args.id);
+
+      return deletedPost[0];
+    },
+    createComment(parent, args, ctx, info) {
+      const userExist = users.some(user => user.id === args.data.author);
+      const postExistAndPublished = posts.some(
+        post => post.id === args.data.post && post.published,
+      );
+
+      if (!userExist) {
+        throw new Error('Author does not exist.');
+      }
+
+      if (!postExistAndPublished) {
+        throw new Error('Post does not exist.');
+      }
+
+      const comment = {
+        id: uuId(),
+        ...args.data,
+      };
+
+      comments.push(comment);
+
+      return comment;
+    },
+    deleteComment(parent, args, ctx, info) {
+      const commentExist = comments.find(comment => comment.id === args.id);
+
+      if (!commentExist) {
+        throw new Error('Comment does not exist.');
+      }
+
+      comments = comments.filter(comment => comment.id !== args.id);
+
+      return commentExist;
     },
   },
   Post: {
