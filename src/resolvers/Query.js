@@ -1,6 +1,7 @@
 const Query = {
   users(parent, args, ctx, info) {
     const { users } = ctx.db;
+    console.log('Users: ', users);
     if (!args.query) {
       return users;
     }
@@ -11,6 +12,7 @@ const Query = {
   },
   posts(parent, args, ctx, info) {
     const { posts } = ctx.db;
+    console.log('Posts: ', posts);
     if (!args.query) {
       return posts;
     }
@@ -48,4 +50,4 @@ const Query = {
   },
 };
 
-export { Query as default };
+module.exports = Query;

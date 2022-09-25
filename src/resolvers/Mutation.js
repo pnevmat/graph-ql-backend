@@ -1,4 +1,4 @@
-import { v4 as uuId } from 'uuid';
+const uuId = require('uuid');
 
 const Mutation = {
   createUser(parent, args, ctx, info) {
@@ -19,7 +19,7 @@ const Mutation = {
     return user;
   },
   deleteUser(parent, args, ctx, info) {
-    const { users, posts, comments } = ctx.db;
+    let { users, posts, comments } = ctx.db;
     const userIndex = users.findIndex(user => user.id === args.id);
 
     if (userIndex === -1) {
@@ -40,7 +40,7 @@ const Mutation = {
     return deletedUser[0];
   },
   updateUser(parent, args, ctx, info) {
-    const { users } = ctx.db;
+    let { users } = ctx.db;
     const userExist = users.find(user => user.id === args.id);
 
     if (!userExist) {
@@ -80,7 +80,7 @@ const Mutation = {
     return post;
   },
   deletePost(parent, args, ctx, info) {
-    const { posts, comments } = ctx.db;
+    let { posts, comments } = ctx.db;
     const postIndex = posts.findIndex(post => post.id === args.id);
 
     if (postIndex === -1) {
@@ -140,7 +140,7 @@ const Mutation = {
     return comment;
   },
   deleteComment(parent, args, ctx, info) {
-    const { comments } = ctx.db;
+    let { comments } = ctx.db;
     const commentExist = comments.find(comment => comment.id === args.id);
 
     if (!commentExist) {
@@ -176,4 +176,4 @@ const Mutation = {
   },
 };
 
-export { Mutation as default };
+module.exports = Mutation;

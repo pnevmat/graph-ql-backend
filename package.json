@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon src/index.js --exec babel-node",
+    "start": "nodemon ./src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -18,11 +18,14 @@
   },
   "homepage": "https://github.com/pnevmat/graph-ql-backend#readme",
   "dependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-plugin-transform-object-rest-spread": "^6.26.0",
-    "babel-preset-env": "^1.7.0",
-    "graphql-yoga": "^2.13.11",
+    "@newrelic/apollo-server-plugin": "^2.0.1",
+    "apollo-server-express": "^3.10.2",
+    "express": "^4.18.1",
+    "graphql": "^15.6.1",
+    "graphql-import": "^1.0.2",
+    "newrelic": "^9.0.3",
     "nodemon": "^2.0.19",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+    "winston": "^3.8.2"
   }
 }

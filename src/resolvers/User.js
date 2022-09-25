@@ -9,4 +9,4 @@ const User = {
   },
 };
 
-export { User as default };
+module.exports = User;
