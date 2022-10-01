@@ -9,6 +9,8 @@ const Mutation = require('./resolvers/Mutation');
 const Post = require('./resolvers/Post');
 const User = require('./resolvers/User');
 const Comment = require('./resolvers/Comment');
+const Subscription = require('./resolvers/Subscription');
+const { PubSub } = require('graphql-subscriptions');
 
 const typeDefs = importSchema('./src/schema.graphql');
 const serverPort = 4000;
@@ -23,18 +25,22 @@ const logger = winston.createLogger({
   ],
 });
 
+const pubsub = new PubSub();
+
 async function server() {
   const server = new ApolloServer({
     typeDefs,
     resolvers: {
       Query,
       Mutation,
+      Subscription,
       Post,
       User,
       Comment,
     },
     context: {
       db,
+      pubsub,
     },
     plugins: [newRelicApolloServerPlugin],
     formatError: err => {
@@ -45,13 +51,6 @@ async function server() {
   });
 
   const app = express();
-
-  // app.get('/', (req, res) => {
-  //   // console.log('Request: ', req);
-  //   // console.log('Request body: ', req.body);
-  //   console.log('Response: ', res);
-  //   return res;
-  // });
 
   const cors = {
     // TODO: Restric API for specific hosts only after final release
@@ -68,23 +67,3 @@ async function server() {
   );
 }
 server();
-
-// const server = new GraphQLServer({
-//   schema: {
-//     typeDefs,
-//     resolvers: {
-//       Query,
-//       Mutation,
-//       Post,
-//       User,
-//       Comment,
-//     },
-//     context: {
-//       db,
-//     },
-//   },
-// });
-
-// server.start(() => {
-//   console.log('The server is up!');
-// });

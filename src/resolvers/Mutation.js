@@ -1,4 +1,4 @@
-const uuId = require('uuid');
+const { v4: uuId } = require('uuid');
 
 const Mutation = {
   createUser(parent, args, ctx, info) {

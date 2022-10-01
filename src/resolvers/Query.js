@@ -1,7 +1,6 @@
 const Query = {
   users(parent, args, ctx, info) {
     const { users } = ctx.db;
-    console.log('Users: ', users);
     if (!args.query) {
       return users;
     }
